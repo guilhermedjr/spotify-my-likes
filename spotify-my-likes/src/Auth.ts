@@ -5,25 +5,28 @@ const {
 } = process.env
 
 const scopes: string[] = [
+  "user-read-private",
   "user-library-read",
   "playlist-modify-private",
   "playlist-modify-public"
 ]
 
-export const AuthUrl: string = `${REACT_APP_AUTHORIZE_URL}?
-client_id=${REACT_APP_CLIENT_ID}
-&redirect_uri=${REACT_APP_REDIRECT_URL}
+export const AuthUrl: string = `https://accounts.spotify.com/authorize?
+client_id=37e32bab351c40f0aed03bd381302869
+&redirect_uri=http://localhost:3000/callback
 &scope=${scopes.join("%20")}
 &response_type=token
 &show_dialog=true`
 
-export const getTokenFromUrl = () => {
-  return window.location.hash
-    .substring(1)
-    .split('&')
-    .reduce((initial: any, item) => {
-      let parts = item.split("=")
-      initial[parts[0]] = decodeURIComponent(parts[1])
-      return initial
-    }, {})
+export const getTokenFromUrl = (): string => {
+  var hashParams: any = {};
+  var e, r = /([^&;=]+)=?([^&;]*)/g,
+  q = window.location.hash.substring(1);
+  e = r.exec(q)
+  while (e) {
+    hashParams[e[1]] = decodeURIComponent(e[2]);
+    e = r.exec(q);
+  }
+  console.log(hashParams.access_token)
+  return hashParams.access_token
 }
